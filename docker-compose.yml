@@ -1,0 +1,80 @@
+
+version: '3.8'
+
+networks:
+    internalnet:
+        driver: bridge
+
+services:
+    influxdb:
+        image: influxdb:1.8
+        container_name: influxdb
+        ports:
+            - 8086:8086
+        environment:
+            INFLUXDB_HTTP_AUTH_ENABLED: "true"
+            INFLUXDB_DB: "MTC"
+            INFLUXDB_ADMIN_USER: "root"
+            INFLUXDB_ADMIN_PASSWORD: "root"
+        volumes:
+            - influxdb_storage:/var/lib/influxdb
+        networks:
+            - internalnet
+        restart: always
+
+    grafana:
+        image: grafana/grafana
+        container_name: grafana
+        ports:
+            - 3000:3000
+        environment:
+            GF_SECURITY_ADMIN_USER: admin
+            GF_SECURITY_ADMIN_PASSWORD: admin
+        volumes:
+            - grafana_storage:/var/lib/grafana
+        networks:
+            - internalnet
+        restart: always
+
+    mosquitto:
+        image: eclipse-mosquitto:latest
+        container_name: mosquitto
+        ports:
+            - 1883:1883
+        networks:
+            - internalnet
+        restart: always
+
+    adminer:
+        image: adminer:latest
+        container_name: adminer
+        ports:
+            - 8080:8080
+        networks:
+            - internalnet
+        restart: always
+
+    db:
+        image: mysql:latest
+        container_name: mysql
+        environment:
+            MYSQL_ROOT_PASSWORD: thales10*
+        networks:
+            - internalnet
+        ports:
+            - 3306:3306
+        restart: always
+        volumes:
+            - mysql_storage:/var/lib/mysql:rw
+
+#    mtc2influx:
+#        image: mtc2influx:latest
+#        container_name: jcbenayas/mtc2influx
+#        networks:
+#            - internalnet
+#        restart: always
+
+volumes:
+        influxdb_storage:
+        grafana_storage:
+        mysql_storage:
