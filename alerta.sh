@@ -10,7 +10,7 @@
 # Get data from Check_MK environment variables.
 # Reference: http://mathias-kettner.de/checkmk_flexible_notifications.html#H1:Real World Notification Scripts
 
-Token=demo-key
+token=demo-key
 api='http://192.168.35.41:8080/api/alert'
 
 if [ "$NOTIFY_WHAT" = "HOST" ]; then
